@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time, random
+from selenium.webdriver.chrome.options import Options
 
 # Definindo o local do driver do Chrome
 
@@ -9,6 +10,10 @@ time.sleep(2)
 for i in range(10):
     PATH = r"C:/Program Files/Google/Chrome/Application/chromedriver.exe"
     driver = webdriver.Chrome(PATH)
+    # chrome_options = Options()
+    # chrome_options.add_argument("--headless")
+
+    # driver = webdriver.Chrome(options=chrome_options)
     # Acessando o link
     driver.get("https://docs.google.com/forms/d/e/1FAIpQLSfv-UDdxCPuvaABPUoL4ej9jJdpCHmvPYHihvdxhga8Px1liQ/viewform")
 
