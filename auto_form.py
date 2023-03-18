@@ -7,13 +7,12 @@ from selenium.webdriver.chrome.options import Options
 
 
 time.sleep(2)
-for i in range(10):
+for i in range(20):
     PATH = r"C:/Program Files/Google/Chrome/Application/chromedriver.exe"
-    driver = webdriver.Chrome(PATH)
-    # chrome_options = Options()
-    # chrome_options.add_argument("--headless")
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
 
-    # driver = webdriver.Chrome(options=chrome_options)
+    driver = webdriver.Chrome(PATH) #, options=chrome_options
     # Acessando o link
     driver.get("https://docs.google.com/forms/d/e/1FAIpQLSfv-UDdxCPuvaABPUoL4ej9jJdpCHmvPYHihvdxhga8Px1liQ/viewform")
 
@@ -33,17 +32,34 @@ for i in range(10):
         botao_proxima_pagina.click()
         time.sleep(1)
 
-        # Questão 1
         mapQuest1 = ['i6', 'i9', 'i12', 'i15', 'i18', 'i21', 'i24']
         pesosQuest1 = [6.3, 58.3, 2.1, 10.4, 33.3, 18.8, 58.4]
-        aleatorioQuest1 = random.choices(mapQuest1, pesosQuest1, k=3)
-        r = [0, 1, 2]
-        for i in r:
-            btn_novosClientes = aleatorioQuest1[i]
-            print(btn_novosClientes)
-            driver.find_element(By.ID, btn_novosClientes).click()
-            aleatorioQuest1.remove(btn_novosClientes)
-            r.remove(r[-1])
+        ja_clicados = [] # define uma lista vazia para guardar os botões já clicados
+        pesos_qtd = [1, 3, 2, 1] # define a lista de pesos para a quantidade de alternativas selecionadas
+        for _ in range(3):
+            botao_escolha = list(set(mapQuest1) - set(ja_clicados)) # cria uma cópia da lista de botões para remover os botões já clicados
+            peso_escolha = pesosQuest1[:len(botao_escolha)] # seleciona aleatoriamente o botão a ser clicado
+            botao = random.choices(botao_escolha, peso_escolha)[0]
+            # guarda o botão selecionado na lista de botões já clicados
+            ja_clicados.append(botao)
+            # define aleatoriamente a quantidade de alternativas a serem selecionadas
+            qtd_alternativas = random.choices([2, 3, 4, 5], pesos_qtd)[0]
+           # seleciona as alternativas aleatoriamente
+            alternativas = driver.find_elements(By.ID, botao)
+            alternativas_disponiveis = [a for a in alternativas if a.get_attribute('for') not in ja_clicados and a.get_attribute('for') != 'i27']
+            qtd_alternativas_disponiveis = len(alternativas_disponiveis)
+
+            if qtd_alternativas_disponiveis >= qtd_alternativas:
+                alternativas_selecionadas = random.sample(alternativas_disponiveis, qtd_alternativas)
+            else:
+                alternativas_selecionadas = alternativas_disponiveis
+
+            # clica nas alternativas selecionadas
+            for a in alternativas_selecionadas:
+                ja_clicados.append(a.get_attribute('for'))
+                a.click()
+                print(a)
+            
             time.sleep(1)
             
         # Questão 2
@@ -85,10 +101,11 @@ for i in range(10):
                 ['i61', 'i71', 'i84'], #Sim, Sim, Sim, Não
                 ['i61', 'i71', 'i81'], #Sim, Sim, Sim, Não
             ]
-            for i in cenarios:
-                for j in i:
-                    driver.find_element(By.ID, j).click()
-                    time.sleep(1)
+            pesosCenarios = [8, 5, 1]
+            aleatorioQuest567 = random.choices(cenarios, pesosCenarios, k=1)[0]
+            for i in aleatorioQuest567:
+                driver.find_element(By.ID, i).click()
+                time.sleep(1)
 
         # Questão 8
         mapQuest8 = ['i91', 'i94']
